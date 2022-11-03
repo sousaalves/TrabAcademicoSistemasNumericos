@@ -1,0 +1,42 @@
+#Matheus Alves de Sousa
+#2020101270
+#APS 2
+
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+from skimage.color import rgb2gray
+from numpy.linalg import svd
+
+retina = data.retina()
+plt.imshow(retina)  # Imagem original
+
+#Escala de cinza
+gray_retina = rgb2gray(retina)
+
+U,S,V_T = svd(gray_retina, full_matrices=False)
+S = np.diag(S)
+fig, ax = plt.subplots(3, 2, figsize=(8, 15))
+
+print(U)
+print("\n-----------------------------------------------------------------------\n")
+print(S)
+print("\n-----------------------------------------------------------------------\n")
+print(V_T)
+
+curr_fig=0
+for r in [60, 70, 80]:
+  retina_approx=U[:, :r] @ S[0:r, :r] @ V_T[:r, :]
+  ax[curr_fig][0].imshow(256-retina_approx)
+  ax[curr_fig][0].set_title("k = "+str(r))
+  ax[curr_fig,0].axis('off')
+  ax[curr_fig][1].set_title("Original Image")
+  ax[curr_fig][1].imshow(gray_retina)
+  ax[curr_fig,1].axis('off')
+  curr_fig +=1
+plt.show()
+
+print("Matriz escala de cinza: ", gray_retina.shape)
+print("Matriz imagem original: ", retina.shape)
+
+#Colab: https://colab.research.google.com/drive/19rDBpLHxBrBZVNarYYVghc4mEvldDFYW#scrollTo=LcWN2HCCeZwJ
